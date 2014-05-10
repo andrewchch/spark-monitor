@@ -2,11 +2,10 @@
 <html>
 <head>
 	<meta charset="utf-8">
-	<title>phonegap & jquery mobile starter</title>
+	<title>Spark Monitor</title>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no;" />
 
 	<link rel="stylesheet"  href="css/themes/default/jquery.mobile-1.4.2.min.css">
-	<link rel="stylesheet" href="css/fluid960.css" />
 	<link rel="stylesheet" href="css/application.css" />
 	<script>
 		var userAgent = navigator.userAgent + '';
@@ -25,35 +24,103 @@
 		}
 	</script>
 	<script src="js/lib/jquery.js"></script>
-	<script src="js/lib/store.js"></script>
-	<!-- your scripts here -->
-	<script src="js/app/app.js"></script>
-	<script src="js/app/bootstrap.js"></script>
-	<script src="js/lib/jquery.mobile.js"></script>
+    <script src="js/lib/jquery.mobile.js"></script>
+    <script src="js/lib/underscore-min.js"></script>
+    <script src="js/lib/backbone-min.js"></script>
+    <script src="js/lib/backbone-relational.js"></script>
+    <script src="js/lib/Backbone.ModelBinder.min.js"></script>
+    <script src="js/lib/Backbone.CollectionBinder.min.js"></script>
+    <script src="js/lib/backbone.localStorage.js"></script>
+    <script src="js/app/models.js"></script>
+    <script src="js/app/views.js"></script>
+    <script src="js/app/sparkApi.js"></script>
+    <script src="js/app/app.js"></script>
+    <script src="js/app/bootstrap.js"></script>
 </head>
 <body>
-	<div data-role="page">
+    <!-- Login -->
+	<div data-role="page" id="login">
 		<div data-role="header">
-			<h1>jQuery Mobile Starter</h1>
+			<h1>Spark Cloud Login</h1>
 		</div>
 		<div data-role="content">
-			<ul data-role="listview" data-inset="true" data-divider-theme="a">
-				<li data-role="list-divider">Snippet Pages</li>
-				<li><a href="snippets/buttons.html" data-transition="slide">Buttons</a></li>
-				<li><a href="snippets/grids.html">Grids</a></li>
-				<li><a href="snippets/gridsfluid.html">Fluid 960 Gruids</a></li>
-				<li><a href="snippets/icons.html">Icons</a></li>
-				<li><a href="snippets/collapsibles.html" transition="slide">Collapsible Boxes</a></li>
-				<li><a href="snippets/collapsible-sets.html">Collapsible Sets</a></li>
-				<li><a href="snippets/forms.html">Form Elements</a></li>
-				<li><a href="snippets/lists.html">List Views</a></li>
-				<li><a href="splitview.html" data-ajax="false">Split Views</a></li>
-				<li><a href="store_todo.html" data-ajax="false">Example of using Store</a></li>
-			</ul>
+            <div class="ui-field-contain">
+                <label for="username">Email:</label>
+                <input type="text" name="username" id="username" value="">
+            </div>
+            <div class="ui-field-contain">
+                <label for="password">Password:</label>
+                <input type="password" name="password" id="password" value="">
+            </div>
+            <button class="ui-btn">Login</button>
 		</div>
 		<div data-role="footer" data-theme="c">
 			<h4>&copy; 2014 - jQuery Mobile starter</h4>
-		</div>	
-	</div><!-- /page -->
+		</div>
+	</div>
+    <!-- Devices -->
+    <div data-role="page" id="devices">
+        <div data-role="header">
+            <h1>Devices</h1>
+        </div>
+        <div data-role="content">
+            <ul id="devices_list"></ul>
+        </div>
+        <div data-role="footer" data-theme="c">
+            <h4>&copy; 2014 - jQuery Mobile starter</h4>
+        </div>
+    </div>
+    <!-- Device alerts -->
+    <div data-role="page" id="device_alerts">
+        <div data-role="header">
+            <h1>Device Alerts</h1>
+        </div>
+        <div data-role="content">
+            <!-- Some sort of list? -->
+        </div>
+        <div data-role="footer" data-theme="c">
+            <h4>&copy; 2014 - jQuery Mobile starter</h4>
+        </div>
+    </div>
+    <!-- Alert -->
+    <div data-role="page" id="alert">
+        <div data-role="header">
+            <h1>Alert</h1>
+        </div>
+        
+        <div class="ui-field-contain">
+            <label for="username">Email:</label>
+            <input type="text" name="username" id="username" value="">
+        </div>
+        <div data-role="footer" data-theme="c">
+            <h4>&copy; 2014 - jQuery Mobile starter</h4>
+        </div>
+    </div>
+
+    <!-- Device Edit Template -->
+    <script type="text/template" id="device-edit-template">
+        <div>
+            <fieldset>
+                <legend>Device</legend>
+                <form>
+                    <div class="ui-field-contain">
+                        <label for="device_id">ID:</label>
+                        <input type="text" name="id" id="device_id" value="">
+                    </div>
+                    <div class="ui-field-contain">
+                        <label for="device_name">Name:</label>
+                        <input type="text" name="name" id="device_name" value="">
+                    </div>
+                    <input type="button" name="save_device" value="Save"/>
+                </form>
+            </fieldset>
+        </div>
+    </script>
+
+    <!-- Device List Template -->
+    <script id="deviceListItemTemplate" type="text/template">
+        <li><a data-name="name" href=""></a></li>
+    </script>
+
 </body>
 </html>

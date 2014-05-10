@@ -1,18 +1,46 @@
-Basic Phonegap (cordova) & JQuery Mobile Starter
+Spark Monitor App
+=================
 
-1. Follow http://docs.phonegap.com/guide_getting-started_index.md.html for your platform,
-2. Copy these files into www directory
-3. To test your local project on an iPhone or android device, open a terminal and, in the folder your index.html file is in, type:
+This app can be used to monitor published variables on a Spark core device and display an alert when the variable
+is set to a given value.
 
-	python -m SimpleHTTPServer
-	
-This will create a local web server which you can then go to on your local mobile device by:
+TODO: Modify the app so that it discovers the exposed variable and functions on the device and allows the user to
+trigger a function (or maybe set a variable?)
 
-	http://my-ip-to-computer:8000
+Use cases:
 
-Projects sites:
-Phonegap: http://phonegap.com
-Jquery Mobile: http://jquerymobile.com
-960 GridView: http://jeromeetienne.github.com/jquery-mobile-960/
-Splitview: https://github.com/asyraf9/jquery-mobile/
-Store: https://github.com/jonathanstark/boutique
+1. User logs in, auth token is stored, user is taken to device list
+1. User selects a device from the list of available devices
+2. User adds/edits/deletes an alert in a list
+3. User selects a device action (function to run - we'll make it so you can' only read variables and that actions
+need to be performed via functions)
+
+Stack
+
+presentation - jQuery Mobile
+view model binding - Angular
+data layer - Backbone / persistence.js / PouchDB (don't know which)
+when.js
+
+I need offline storage and syncing (essentially caching) so I don't need to keep going back to the server for, e.g.,
+device details. Persistence.js is probably overkill for this app, but would be god to get some experience with it.
+I'll try Backbone.localStorage for now, the persistence later.
+
+Models
+
+user
+    user_id
+device
+    user_id
+    name
+    functions
+    variables
+function
+    name
+alert
+    device_id
+    poll_interval
+    start_time
+    end_time
+    alert_text
+    active
