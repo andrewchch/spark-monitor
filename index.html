@@ -31,6 +31,7 @@
     <script src="js/lib/Backbone.ModelBinder.min.js"></script>
     <script src="js/lib/Backbone.CollectionBinder.min.js"></script>
     <script src="js/lib/backbone.localStorage.js"></script>
+    <script src="js/app/globals.js"></script>
     <script src="js/app/models.js"></script>
     <script src="js/app/views.js"></script>
     <script src="js/app/sparkApi.js"></script>
@@ -52,7 +53,7 @@
                 <label for="password">Password:</label>
                 <input type="password" name="password" id="password" value="">
             </div>
-            <button class="ui-btn">Login</button>
+            <input type="submit" class="ui-btn" value="Login"/>
 		</div>
 		<div data-role="footer" data-theme="c">
 			<h4>&copy; 2014 - jQuery Mobile starter</h4>
@@ -85,12 +86,29 @@
     <!-- Alert -->
     <div data-role="page" id="alert">
         <div data-role="header">
-            <h1>Alert</h1>
+            <h1>Alert for <span name="device">device</span></h1>
         </div>
-        
+
         <div class="ui-field-contain">
-            <label for="username">Email:</label>
-            <input type="text" name="username" id="username" value="">
+            <label for="alert_startTime">Start time:</label>
+            <input type="text" name="alert_startTime" id="alert_startTime" value="">
+        </div>
+        <div class="ui-field-contain">
+            <label for="alert_endTime">End time:</label>
+            <input type="text" name="alert_endTime" id="alert_endTime" value="">
+        </div>
+        <div class="ui-field-contain">
+            <label for="alert_interval">Interval (mins):</label>
+            <input type="text" name="alert_interval" id="alert_interval" value="">
+        </div>
+        <div class="ui-field-contain">
+            <!-- TODO: make this a data-driven select -->
+            <label for="alert_variable">Variable:</label>
+            <input type="text" name="alert_variable" id="alert_variable" value="">
+        </div>
+        <div class="ui-field-contain">
+            <label for="alert_value_expression">Value expression:</label>
+            <input type="text" name="alert_value_expression" id="alert_value_expression" value="">
         </div>
         <div data-role="footer" data-theme="c">
             <h4>&copy; 2014 - jQuery Mobile starter</h4>

@@ -14,6 +14,7 @@ var AlertModel = Backbone.RelationalModel.extend({
         checkInterval: 5,
         startTime: "00:00",
         endTime: "00:00",
+        variable: "",
         valueExpression: "",
         message: "Alert"
     }
@@ -53,11 +54,13 @@ var DeviceModel = Backbone.Model.extend({
 
 var DeviceCollection = Backbone.Collection.extend({
     model: DeviceModel,
-    url: "/devices",
-    localStorage: new Backbone.LocalStorage("Devices"),
+    url: '/v1/devices'
+    /*
+    ,localStorage: new Backbone.LocalStorage("Devices"),
     initialize: function() {
         this.fetch();
     }
+     */
 });
 
 var UserModel = Backbone.Model.extend({
@@ -77,7 +80,10 @@ var UserModel = Backbone.Model.extend({
             key: 'belongsTo',
             includeInJSON: 'id'
         }
-    }]
+    }],
+    initialize: function() {
+        this.devices = new DeviceCollection();
+    }
 });
 
 var UserCollection = Backbone.Collection.extend({

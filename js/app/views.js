@@ -1,10 +1,16 @@
 // Create a Backbone view
-var BaseView = Backbone.View.extend({
+var PageView = Backbone.View.extend({
     //local variable for model binder
     _modelBinder: undefined,
+    _model: undefined,
+    _container: undefined,
+    _bindings: undefined,
     initialize: function () {
         //on view initialize, initialize _modelBinder
         this._modelBinder = new Backbone.ModelBinder();
+        this._model = this.options.model;
+        this._container = this.options.container;
+        this._bindings = this.options.bindings;
     },
     close: function () {
         //when view closes, unbind Model bindings
@@ -12,26 +18,14 @@ var BaseView = Backbone.View.extend({
     },
     render: function () {
         //when the view is rendered
-        //get the templates id from passed in options
-        //NOTE: templateId is not a property of Backbone or       ModelBinder, its a custom parameter that we pass into view's constructor
-
-        var templateId = "#" + this.options.templateId;
-
-        //construct the template
-        var template = _.template($(templateId).html());
-        var templateHTML = template();
-        //append it to current view
-        this.el.html(templateHTML);
-
-        //get the bindings attribute from passed options
-        //NOTE: bindings is not a property of Backbone, its a custom parameter that we pass into view's constructor
-        var bindings = this.options.bindings;
+        //get the container from passed in options
+        this.$el = this._container;
 
         //call modelBinder bind api to apply bindings on the current view
         this._modelBinder.bind(
-            this.model /*the model to bind*/ ,
+            this._model /*the model to bind*/ ,
             this.el /*root element*/ ,
-            bindings /*bindings*/
+            this._bindings /*bindings*/
         );
 
         return this;
@@ -64,7 +58,3 @@ var ListView = Backbone.View.extend({
         this._collectionBinder.unbind();
     }
 });
-
-// Specific page views
-var 
-

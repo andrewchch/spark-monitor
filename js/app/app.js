@@ -1,47 +1,18 @@
 var startApp = function() {
 
-    // Set up view bindings
-    var loginViewBindings = {
-        "username": '[name = "username"]',
-        "password": '[name = "password"]'
-    };
-
-    var deviceViewBindings = {
-        "id": '[name = "id"]',
-        "name": '[name = "name"]'
-    };
-
-    var alertViewBindings = {
-        "id": '[name = "id"]',
-        "name": '[name = "name"]',
-        "deviceId": '[name = "deviceId"]',
-        "checkInterval": '[name = "checkInterval"]',
-        "startTime": '[name = "startTime"]',
-        "endTime": '[name = "endTime"]',
-        "endTime": '[name = "endTime"]',
-        "message": '[name = "message"]'
-    };
-
     var deviceItemBindings = {
         name: '[name="name"]',
         id: {selector: '[name="name"]', elAttribute: 'href', converter: function() { return this.model.getUrl(); } }
     };
 
     // Instantiate models
-    var devices = new DeviceCollection(),
-        alerts = new AlertCollection(),
-        users = UserCollection();
+    app.collections = {
+        devices: new DeviceCollection(),
+        alerts: new AlertCollection(),
+        users: new UserCollection()
+    };
 
-    // Instantiate the views
-    var deviceView = new BaseView({
-        model: DeviceModel,
-        templateId: "device-edit-template",
-        bindings: deviceViewBindings
-    });
-
-    // Formatters
-    var device
-
+    // TODO: work out what to do with nested views
     var deviceListView = new ListView({
         collectionContainer: $("#devices_list"),
         itemTemplateId: "deviceListItemTemplate",
@@ -49,4 +20,18 @@ var startApp = function() {
         bindings: deviceItemBindings
     });
 
+    // Disable jQM route handling so we can get Backbone to do it
+    $(document).on( "mobileinit",
+        function() {
+            // Prevents all anchor click handling including the addition of active button state and alternate link blurring.
+            $.mobile.linkBindingEnabled = false;
+
+            // Disabling this will prevent jQuery Mobile from handling hash changes
+            $.mobile.hashListeningEnabled = false;
+        }
+    )
+
+    // Instantiate the route which will manage all view and navigation. Each view will instantiate any
+    // model it needs.
+    var router = new Router();
 };
