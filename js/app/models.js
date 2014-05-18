@@ -64,9 +64,8 @@ var DeviceCollection = Backbone.Collection.extend({
 });
 
 var UserModel = Backbone.Model.extend({
-    idAttribute: "id",
+    idAttribute: "username",
     defaults:{
-        email: "",
         username: "",
         authToken: "",
         devices: new DeviceCollection()
@@ -78,7 +77,7 @@ var UserModel = Backbone.Model.extend({
         collectionType: 'DeviceCollection',
         reverseRelation: {
             key: 'belongsTo',
-            includeInJSON: 'id'
+            includeInJSON: 'username'
         }
     }],
     initialize: function() {
@@ -91,5 +90,32 @@ var UserCollection = Backbone.Collection.extend({
     localStorage: new Backbone.LocalStorage("Users"),
     initialize: function() {
         this.fetch();
+    },
+    getAuthorisedUser: function(credentials) {
+        // See if we have an existing user with an auth token.
+        var user = this.get(credentials.username),
+            self = this;
+
+        if (user && user.get("authToken")) {
+            return new $.Deferred().resolve(user);
+        }
+
+        // No user or user has no auth token (how likely is that?) so
+        // we need to authenticate with the [provided credentials.
+        var loginDone = function (response) {
+                user = user || self.add({
+                    username: credentials.username
+                });
+                user.set("authToken", response.auth_token);
+                return user;
+            },
+            loginFail = function () {
+                console.log("Invalid login details");
+            };
+
+        return SparkApi.login({
+            username: credentials.username,
+            password: credentials.password
+        }).pipe(loginDone, loginFail);
     }
 });

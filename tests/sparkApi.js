@@ -29,7 +29,7 @@ test("Get an auth token", function () {
     var login = SparkApi.login({
         username: "andrew",
         password: "123"
-    })
+    });
 
     login.done(function(response) {
         deepEqual(response, responseObj, "Valid response returned");

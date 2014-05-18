@@ -3,9 +3,35 @@ var Router = Backbone.Router.extend( {
 
     // The Router constructor
     initialize: function() {
+        // Instantiates a new Login View if it doesn't already exist, create a model and bind it to the model
+        var self = this;
+        this.loginView = new PageView({
+            model: new LoginModel(),
+            container: $("#login"),
+            bindings: {
+                "username": '[name = "username"]',
+                "password": '[name = "password"]'
+            },
+            on_submit: function () {
+                PubSub.publish("loading");
+                app.collections.users.getAuthorisedUser({
+                    username: this._model.get("username"),
+                    password: this._model.get("password")
+                }).done(function() {
+                    // We have an authorised user so go to the user page
+                    self.user();
+                }).fail(function() {
+                    // Display the error
+                    console.log("on_submit: Invalid login details");
+                }).always(function() {
+                    PubSub.publish("stoppedLoading");
+                });
+            }
+        });
+
         // Instantiates a new User View
         this.devicesView = new PageView({
-            model: UserModel,
+            model: new UserModel(),
             container: $("#user"),
             bindings: {
                 "id": '[name = "id"]',
@@ -16,7 +42,7 @@ var Router = Backbone.Router.extend( {
 
         // Instantiates a new Device View
         this.devicesView = new PageView({
-            model: DeviceModel,
+            model: new DeviceModel(),
             container: $("#device"),
             bindings: {
                 "id": '[name = "id"]',
@@ -27,7 +53,7 @@ var Router = Backbone.Router.extend( {
 
         // Instantiates a new Alert View
         this.alertView = new PageView({
-            model: AlertModel,
+            model: new AlertModel(),
             container: $("#alert"),
             bindings: {
                 "id": '[name = "id"]',
@@ -60,28 +86,15 @@ var Router = Backbone.Router.extend( {
     */
 
     login: function() {
-        // Instantiates a new Login View if it doesn't already exist, create a model and bind it to the model
-        if (!this.loginView) {
-
-        }
-        this.loginView = new PageView({
-            model: LoginModel,
-            container: $("#login"),
-            bindings: {
-                "username": '[name = "username"]',
-                "password": '[name = "password"]'
-            }
-        });
-
+        this.loginView.render();
         $.mobile.changePage( "#login" , { reverse: false, changeHash: false } );
     },
     user: function() {
-        // Fetches the Collection of Category Models for the current Category View
+        // Fetches the collection of device models for the current login
         this.devicesView.collection.fetch().done( function() {
-            $.mobile.changePage( "#devices" + type, { reverse: false, changeHash: false } );
+            this.devicesView.render();
+            $.mobile.changePage( "#devices", { reverse: false, changeHash: false } );
         });
-
-        var model = this.devicesView.model;
 
         $.mobile.changePage( "#devices" , { reverse: false, changeHash: false } );
     },

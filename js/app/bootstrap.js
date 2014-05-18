@@ -20,7 +20,7 @@
 	};
 	$(document).bind('mobileinit', onMobileInit);
 	document.addEventListener("deviceready", onDeviceReady, false);
-	$('form').live("submit",function(e){
+	$('form').on("submit",function(e){
 		var form = $(this).attr('id');
 		return checkrequireds(e, form);
 	});

@@ -50,6 +50,50 @@ test("Load devices for a user", function () {
     requests[0].respond(200, { "Content-Type": "application/json" }, JSON.stringify(devices));
 });
 
+test("Get an authenticated user that doesn't exist in the collection", function () {
+    var credentials = {
+            username: 'test@blah.com',
+            password: '123'
+        },
+        authResponse = {
+            username: credentials.username,
+            auth_token: 'abc'
+        };
+
+    stop();
+
+    var gettingUser = (new UserCollection()).getAuthorisedUser(credentials);
+
+    gettingUser.done(function(user) {
+        equal(user.get("username"), authResponse.username, "User has correct username");
+        equal(user.get("authToken"), authResponse.auth_token, "User has correct auth token");
+        start();
+    });
+
+    requests[0].respond(200, { "Content-Type": "application/json" }, JSON.stringify(authResponse));
+});
+
+test("Get an authenticated user that does exist in the collection", function () {
+    var userData = {
+            username: 'test@blah.com',
+            authToken: 'abc'
+        };
+
+    stop();
+
+    var users = new UserCollection(),
+        user = users.add(userData),
+        gettingUser = users.getAuthorisedUser(userData);
+
+    gettingUser.done(function(user) {
+        equal(user.get("username"), userData.username, "User has correct username");
+        equal(user.get("authToken"), userData.authToken, "User has correct auth token");
+        start();
+    });
+});
+
+module("DeviceModel");
+
 test("Instantiate a device", function () {
     var device = new DeviceModel();
     var alerts = device.get("alerts");

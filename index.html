@@ -7,36 +7,6 @@
 
 	<link rel="stylesheet"  href="css/themes/default/jquery.mobile-1.4.2.min.css">
 	<link rel="stylesheet" href="css/application.css" />
-	<script>
-		var userAgent = navigator.userAgent + '';
-		if (userAgent.indexOf('iPhone') > -1) {
-			document.write('<script src="js/lib/cordova-iphone.js"></sc' + 'ript>');
-			document.write('<script src="js/app/ios.js"></sc' + 'ript>');
-			document.write('<link rel="stylesheet" href="css/ios.css" />');
-			var mobile_system = 'iphone';
-		} else if (userAgent.indexOf('Android') > -1) {
-			document.write('<script src="js/lib/cordova-android.js"></sc' + 'ript>');
-			document.write('<script src="js/app/android.js"></sc' + 'ript>');
-			document.write('<link rel="stylesheet" href="css/android.css" />');
-			var mobile_system = 'android';
-		} else {
-			var mobile_system = '';
-		}
-	</script>
-	<script src="js/lib/jquery.js"></script>
-    <script src="js/lib/jquery.mobile.js"></script>
-    <script src="js/lib/underscore-min.js"></script>
-    <script src="js/lib/backbone-min.js"></script>
-    <script src="js/lib/backbone-relational.js"></script>
-    <script src="js/lib/Backbone.ModelBinder.min.js"></script>
-    <script src="js/lib/Backbone.CollectionBinder.min.js"></script>
-    <script src="js/lib/backbone.localStorage.js"></script>
-    <script src="js/app/globals.js"></script>
-    <script src="js/app/models.js"></script>
-    <script src="js/app/views.js"></script>
-    <script src="js/app/sparkApi.js"></script>
-    <script src="js/app/app.js"></script>
-    <script src="js/app/bootstrap.js"></script>
 </head>
 <body>
     <!-- Login -->
@@ -139,6 +109,39 @@
     <script id="deviceListItemTemplate" type="text/template">
         <li><a data-name="name" href=""></a></li>
     </script>
+
+    <script>
+        var userAgent = navigator.userAgent + '';
+        if (userAgent.indexOf('iPhone') > -1) {
+            document.write('<script src="js/lib/cordova-iphone.js"></sc' + 'ript>');
+            document.write('<script src="js/app/ios.js"></sc' + 'ript>');
+            document.write('<link rel="stylesheet" href="css/ios.css" />');
+            var mobile_system = 'iphone';
+        } else if (userAgent.indexOf('Android') > -1) {
+            document.write('<script src="js/lib/cordova-android.js"></sc' + 'ript>');
+            document.write('<script src="js/app/android.js"></sc' + 'ript>');
+            document.write('<link rel="stylesheet" href="css/android.css" />');
+            var mobile_system = 'android';
+        } else {
+            var mobile_system = '';
+        }
+    </script>
+    <script src="js/lib/jquery-1.11.1.min.js"></script>
+    <script src="js/lib/underscore-min.js"></script>
+    <script src="js/lib/backbone-min.js"></script>
+    <script src="js/lib/backbone-relational.js"></script>
+    <script src="js/lib/Backbone.ModelBinder.min.js"></script>
+    <script src="js/lib/Backbone.CollectionBinder.min.js"></script>
+    <script src="js/lib/backbone.localStorage.js"></script>
+    <script src="js/lib/pubsub.js"></script>
+    <script src="js/app/globals.js"></script>
+    <script src="js/app/models.js"></script>
+    <script src="js/app/views.js"></script>
+    <script src="js/app/sparkApi.js"></script>
+    <script src="js/app/app.js"></script>
+    <script src="js/app/routes.js"></script>
+    <script src="js/app/bootstrap.js"></script>
+    <script src="js/lib/jquery.mobile.js"></script>
 
 </body>
 </html>

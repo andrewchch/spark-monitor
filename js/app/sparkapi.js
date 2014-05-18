@@ -2,14 +2,20 @@
 
 var SparkApi = (function() {
     // Privates
-    var baseUrl = 'https://api.spark.io';
+    var baseUrl = 'https://api.spark.io',
+        basicAuth = "Basic " + btoa("spark:spark");
+
+    $.ajaxPrefilter(function(options) {
+        options.url = baseUrl + options.url;
+    });
 
     var login = function(data) {
         return $.ajax({
-            username: 'spark',
-            password: 'spark',
-            method: 'POST',
-            url: baseUrl + '/oauth/token',
+            type: 'POST',
+            headers: {
+                "Authorization": basicAuth
+            },
+            url: '/oauth/token',
             data: {
                 grant_type: 'password',
                 username: data.username,
@@ -20,7 +26,7 @@ var SparkApi = (function() {
 
     return {
         login: login
-    }
+    };
 
     //var request =
 })();

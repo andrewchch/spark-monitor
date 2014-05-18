@@ -5,26 +5,25 @@ var PageView = Backbone.View.extend({
     _model: undefined,
     _container: undefined,
     _bindings: undefined,
-    initialize: function () {
+    initialize: function (options) {
         //on view initialize, initialize _modelBinder
         this._modelBinder = new Backbone.ModelBinder();
-        this._model = this.options.model;
-        this._container = this.options.container;
-        this._bindings = this.options.bindings;
+        this._model = options.model;
+        this.$el = this._container = options.container;
+        this._bindings = options.bindings;
+        this.on_submit = options.on_submit;
+
+        this.delegateEvents();
     },
     close: function () {
         //when view closes, unbind Model bindings
         this._modelBinder.unbind();
     },
     render: function () {
-        //when the view is rendered
-        //get the container from passed in options
-        this.$el = this._container;
-
         //call modelBinder bind api to apply bindings on the current view
         this._modelBinder.bind(
             this._model /*the model to bind*/ ,
-            this.el /*root element*/ ,
+            this.$el /*root element*/ ,
             this._bindings /*bindings*/
         );
 
@@ -42,12 +41,12 @@ var ListView = Backbone.View.extend({
     _collection: undefined,
     _collectionContainer: undefined,
     _bindings: undefined,
-    initialize: function () {
-        this._itemHtml = $("#" + this.options.itemTemplateId);
-        this._collection = this.options.collection;
-        this._collectionContainer = this.options.collectionContainer;
-        this._bindings = this.options.bindings;
-        var elManagerFactory = new Backbone.CollectionBinder.ElManagerFactory(this._collectionContainer, this._itemHtml, "data-name");
+    initialize: function (options) {
+        this._itemHtml = $("#" + options.itemTemplateId).html();
+        this._collection = options.collection;
+        this._collectionContainer = options.collectionContainer;
+        this._bindings = options.bindings;
+        var elManagerFactory = new Backbone.CollectionBinder.ElManagerFactory(this._itemHtml, "data-name");
         this._collectionBinder = new Backbone.CollectionBinder(elManagerFactory);
     },
     render: function(){

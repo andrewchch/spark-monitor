@@ -16,7 +16,7 @@ var startApp = function() {
     var deviceListView = new ListView({
         collectionContainer: $("#devices_list"),
         itemTemplateId: "deviceListItemTemplate",
-        collection: devices,
+        collection: app.collections.devices,
         bindings: deviceItemBindings
     });
 
@@ -32,6 +32,6 @@ var startApp = function() {
     )
 
     // Instantiate the route which will manage all view and navigation. Each view will instantiate any
-    // model it needs.
-    var router = new Router();
+    // models it needs.
+    app.router = new Router();
 };
