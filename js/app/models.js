@@ -22,13 +22,15 @@ var AlertModel = Backbone.RelationalModel.extend({
 
 var AlertCollection = Backbone.Collection.extend({
     model: AlertModel,
-    localStorage: new Backbone.LocalStorage("Alerts"),
+    localStorage: new Backbone.LocalStorage("Alerts")
+    /*
     initialize: function() {
         this.fetch();
     }
+    */
 });
 
-var DeviceModel = Backbone.Model.extend({
+var DeviceModel = Backbone.RelationalModel.extend({
     idAttribute: "id",
     defaults:{
         id: "",
@@ -43,27 +45,31 @@ var DeviceModel = Backbone.Model.extend({
     relations: [{
         type: Backbone.HasMany,
         key: 'alerts',
-        relatedModel: 'Alert',
-        collectionType: 'AlertCollection',
+        relatedModel: AlertModel,
+        collectionType: AlertCollection,
         reverseRelation: {
             key: 'alertFor',
             includeInJSON: 'id'
         }
-    }]
+    }],
+    initialize: function() {
+        this.alerts = new AlertCollection();
+        this.alerts.fetch();
+    }
 });
 
 var DeviceCollection = Backbone.Collection.extend({
     model: DeviceModel,
     url: '/v1/devices'
+    //localStorage: new Backbone.LocalStorage("Devices"),
     /*
-    ,localStorage: new Backbone.LocalStorage("Devices"),
     initialize: function() {
         this.fetch();
     }
-     */
+    */
 });
 
-var UserModel = Backbone.Model.extend({
+var UserModel = Backbone.RelationalModel.extend({
     idAttribute: "username",
     defaults:{
         username: "",
@@ -73,21 +79,37 @@ var UserModel = Backbone.Model.extend({
     relations: [{
         type: Backbone.HasMany,
         key: 'devices',
-        relatedModel: 'Device',
-        collectionType: 'DeviceCollection',
+        relatedModel: DeviceModel,
+        collectionType: DeviceCollection,
         reverseRelation: {
-            key: 'belongsTo',
+            key: 'deviceFor',
             includeInJSON: 'username'
         }
     }],
+    loadDevices: function() {
+        var self = this;
+
+        return this.devices.fetch({
+            access_token: this.get("access_token")
+        }).pipe(function(devices) {
+            // Need to associated each loaded device with the user
+            _.each(self.devices.models, function(device) {
+                device.set("deviceFor", self);
+            });
+        })
+    },
     initialize: function() {
         this.devices = new DeviceCollection();
+    },
+    toString: function() {
+        return '<User ' + this.get("id") + ">";
     }
 });
 
 var UserCollection = Backbone.Collection.extend({
     model: UserModel,
     localStorage: new Backbone.LocalStorage("Users"),
+    currentUser: null,
     initialize: function() {
         this.fetch();
     },
@@ -107,6 +129,7 @@ var UserCollection = Backbone.Collection.extend({
                     username: credentials.username
                 });
                 user.set("authToken", response.auth_token);
+                self.setCurrentUser(user);
                 return user;
             },
             loginFail = function () {
@@ -117,5 +140,14 @@ var UserCollection = Backbone.Collection.extend({
             username: credentials.username,
             password: credentials.password
         }).pipe(loginDone, loginFail);
+    },
+    setCurrentUser: function(user) {
+        this.currentUser = user;
+    },
+    getCurrentUser: function() {
+        // For now, we'll set the current user to whoever last logged in.
+        // Logging in is the process of confirming your credentials, since we don't want
+        // to save passwords and this app only works online anyway.
+        return currentUser;
     }
 });

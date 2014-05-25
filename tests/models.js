@@ -26,7 +26,7 @@ test("Instantiate a user", function () {
 });
 
 test("Load devices for a user", function () {
-    var user = new UserModel(),
+    var user = new UserModel({id: 1}),
         devices = [
             {
                 id: "123",
@@ -35,16 +35,19 @@ test("Load devices for a user", function () {
 
     stop();
 
-    var fetchingDevices = user.devices.fetch();
+    var loadingDevices = user.loadDevices();
 
-    fetchingDevices.done(function() {
+    loadingDevices.done(function() {
         var deviceCollection = user.devices,
             firstModel = deviceCollection.models[0];
 
         equal(deviceCollection.size(), devices.length, "Devices fetched for user");
         equal(firstModel.get("id"), devices[0].id, "Device has correct id");
         equal(firstModel.get("name"), devices[0].name, "Device has correct name");
+        equal(firstModel.get("deviceFor").toString(), user.toString(), "Device belongs to a user");
         start();
+    }).fail(function() {
+        console.log('failed');
     });
 
     requests[0].respond(200, { "Content-Type": "application/json" }, JSON.stringify(devices));
@@ -79,11 +82,11 @@ test("Get an authenticated user that does exist in the collection", function () 
             authToken: 'abc'
         };
 
-    stop();
-
     var users = new UserCollection(),
         user = users.add(userData),
         gettingUser = users.getAuthorisedUser(userData);
+
+    stop();
 
     gettingUser.done(function(user) {
         equal(user.get("username"), userData.username, "User has correct username");
