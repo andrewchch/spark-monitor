@@ -17,6 +17,10 @@ var AppViews = (function()
 
             this.delegateEvents();
         },
+        setModel: function (model) {
+            this._model = model;
+            return this._model;
+        },
         close: function () {
             //when view closes, unbind Model bindings
             this._modelBinder.unbind();
@@ -72,18 +76,18 @@ var AppViews = (function()
             "password": '[name = "password"]'
         },
         on_submit: function () {
-            PubSub.publish("loading");
+            //PubSub.publish("loading");
             app.collections.users.getAuthorisedUser({
                 username: this._model.get("username"),
                 password: this._model.get("password")
-            }).done(function() {
+            }).done(function(user) {
                 // We have an authorised user so go to the user page
-                app.router.user();
+                app.router.user(user);
             }).fail(function() {
                 // Display the error
                 console.log("on_submit: Invalid login details");
             }).always(function() {
-                PubSub.publish("stoppedLoading");
+                //PubSub.publish("stoppedLoading");
             });
         }
     });
@@ -95,7 +99,7 @@ var AppViews = (function()
         deviceListView: null,
         bindings: {
             "id": '[name = "id"]',
-            "name": '[name = "name"]'
+            "name": '[name = "username"]'
             // TODO: list devices
         },
         afterRender: function() {

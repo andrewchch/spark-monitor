@@ -5,10 +5,10 @@ var Router = Backbone.Router.extend( {
     initialize: function() {
         // Instantiates a new Login View if it doesn't already exist, create a model and bind it to the model
         var self = this;
-        this.loginView = new LoginView();
-        this.userView = new UserView();
-        this.deviceView = new DeviceView();
-        this.alertView = new AlertView();
+        this.loginView = AppViews.loginView;
+        this.userView = AppViews.userView;
+        this.deviceView = AppViews.deviceView;
+        this.alertView = AppViews.alertView;
 
         // Tells Backbone to start watching for hashchange events
         Backbone.history.start();
@@ -26,16 +26,19 @@ var Router = Backbone.Router.extend( {
     These are essentially controllers that the router calls, which will create views, create models,
     bind the views to the models.
     */
-
+    // TODO: refactor these out into proper controllers
     login: function() {
         this.loginView.render();
         $.mobile.changePage( "#login" , { reverse: false, changeHash: false } );
     },
-    user: function() {
-        this.userView.get("devices").fetch().done( function() {
-            this.userView.render();
-            $.mobile.changePage( "#user", { reverse: false, changeHash: false } );
-        });
+    user: function(user) {
+        var self = this;
+        this.userView
+            .setModel(user)
+            .loadDevices().done( function() {
+                self.userView.render();
+                $.mobile.changePage( "#user", { reverse: false, changeHash: false } );
+            });
     },
     device: function(id) {
         $.mobile.changePage( "#device" , { reverse: false, changeHash: false } );

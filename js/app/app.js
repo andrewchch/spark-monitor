@@ -7,9 +7,6 @@ var startApp = function() {
         users: new UserCollection()
     };
 
-    // Instantiate views
-    app.views = AppViews();
-
     // Instantiate the route which will manage all view and navigation. Each view will instantiate any
     // models it needs.
     app.router = new Router();

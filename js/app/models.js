@@ -90,13 +90,15 @@ var UserModel = Backbone.RelationalModel.extend({
         var self = this;
 
         return this.devices.fetch({
-            access_token: this.get("access_token")
+            data: {
+                access_token: this.get("authToken")
+            }
         }).pipe(function(devices) {
             // Need to associated each loaded device with the user
             _.each(self.devices.models, function(device) {
                 device.set("deviceFor", self);
             });
-        })
+        });
     },
     initialize: function() {
         this.devices = new DeviceCollection();
@@ -128,7 +130,7 @@ var UserCollection = Backbone.Collection.extend({
                 user = user || self.add({
                     username: credentials.username
                 });
-                user.set("authToken", response.auth_token);
+                user.set("authToken", response.access_token);
                 self.setCurrentUser(user);
                 return user;
             },

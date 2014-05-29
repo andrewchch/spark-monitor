@@ -60,7 +60,7 @@ test("Get an authenticated user that doesn't exist in the collection", function 
         },
         authResponse = {
             username: credentials.username,
-            auth_token: 'abc'
+            access_token: 'abc'
         };
 
     stop();
@@ -69,7 +69,7 @@ test("Get an authenticated user that doesn't exist in the collection", function 
 
     gettingUser.done(function(user) {
         equal(user.get("username"), authResponse.username, "User has correct username");
-        equal(user.get("authToken"), authResponse.auth_token, "User has correct auth token");
+        equal(user.get("authToken"), authResponse.access_token, "User has correct auth token");
         start();
     });
 
