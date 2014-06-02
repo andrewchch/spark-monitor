@@ -1,5 +1,17 @@
 var AppViews = (function()
 {
+    var buildPage = function(params) {
+        var pageEl = $("#"  + params.id);
+
+        if (pageEl.length === 0) {
+            var pageTemplate = Utils.getPageTemplate(),
+                html = pageTemplate(params);
+
+            pageEl = $(html).appendTo($("body"));
+        }
+        return pageEl;
+    };
+
     var PageView = Backbone.View.extend({
         //local variable for model binder
         _modelBinder: undefined,
@@ -8,12 +20,15 @@ var AppViews = (function()
         _bindings: undefined,
         initialize: function (options) {
             //on view initialize, initialize _modelBinder
+            this.id = this.id || options.id;
+            this.title = this.title || options.title;
+            this._model = this.model || options.model;
+            this._bindings = this.bindings || options.bindings;
+            this.on_submit = this.on_submit || options.on_submit;
+            this.afterRender = this.afterRender || options.afterRender;
+            this.contentTemplate = this.contentTemplate || options.contentTemplate;
+
             this._modelBinder = new Backbone.ModelBinder();
-            this._model = options.model;
-            this.$el = this._container = options.container;
-            this._bindings = options.bindings;
-            this.on_submit = options.on_submit;
-            this.afterRender = options.afterRender;
 
             this.delegateEvents();
         },
@@ -26,6 +41,14 @@ var AppViews = (function()
             this._modelBinder.unbind();
         },
         render: function () {
+            // Build the page content
+            var content = _.template($("#" + this.contentTemplate).html())();
+            this.$el = this._container = buildPage({
+                id: this.id,
+                title: this.title,
+                content: content
+            });
+
             //call modelBinder bind api to apply bindings on the current view
             this._modelBinder.bind(
                 this._model /*the model to bind*/ ,
@@ -68,12 +91,16 @@ var AppViews = (function()
         }
     });
 
-    var loginView = new PageView({
+    var LoginView = PageView.extend({
         model: new LoginModel(),
-        container: $("#login"),
+        container: null,
         bindings: {
             "username": '[name = "username"]',
             "password": '[name = "password"]'
+        },
+        initialize: function(options) {
+            this.container = options.container;
+            PageView.prototype.initialize.call(this, options);
         },
         on_submit: function () {
             //PubSub.publish("loading");
@@ -93,7 +120,7 @@ var AppViews = (function()
     });
 
     // Page Views
-    var userView = new PageView({
+    var UserView = PageView.extend({
         model: new UserModel(),
         container: $("#user"),
         deviceListView: null,
@@ -101,6 +128,10 @@ var AppViews = (function()
             "id": '[name = "id"]',
             "name": '[name = "username"]'
             // TODO: list devices
+        },
+        initialize: function(options) {
+            this.container = options.container;
+            PageView.prototype.initialize.call(this, options);
         },
         afterRender: function() {
             // Add the devices view
@@ -116,17 +147,21 @@ var AppViews = (function()
         }
     });
 
-    var deviceView = new PageView({
+    var DeviceView = PageView.extend({
         model: new DeviceModel(),
         container: $("#device"),
         bindings: {
             "id": '[name = "id"]',
             "name": '[name = "name"]'
             // TODO: list variables and functions
+        },
+        initialize: function(options) {
+            this.container = options.container;
+            PageView.prototype.initialize.call(this, options);
         }
     });
 
-    var alertView = new PageView({
+    var AlertView = PageView.extend({
         model: new AlertModel(),
         container: $("#alert"),
         bindings: {
@@ -139,13 +174,17 @@ var AppViews = (function()
             "variable": '[name = "variable"]',
             "expression": '[name = "expression"]',
             "message": '[name = "message"]'
+        },
+        initialize: function(options) {
+            this.container = options.container;
+            PageView.prototype.initialize.call(this, options);
         }
     });
 
     return {
-        loginView: loginView,
-        userView: userView,
-        deviceView: deviceView,
-        alertView: alertView
+        LoginView: LoginView,
+        UserView: UserView,
+        DeviceView: DeviceView,
+        AlertView: AlertView
     }
 })();

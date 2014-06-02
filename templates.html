@@ -1,0 +1,94 @@
+<script type="text/template" id="page-template">
+    <div data-role="page" id="<%=id%>">
+        <div data-role="header">
+            <h1><%=title%></h1>
+        </div>
+        <div data-role="content">
+            <%=content%>
+        </div>
+        <div data-role="footer" data-theme="c">
+            <h4>&copy; 2014 - SparkMonitor</h4>
+        </div>
+    </div>
+</script>
+
+<!-- Login -->
+<script type="text/template" id="login-page-template">
+    <div class="ui-field-contain">
+        <label for="username">Email:</label>
+        <input type="text" name="username" id="username" value="">
+    </div>
+    <div class="ui-field-contain">
+        <label for="password">Password:</label>
+        <input type="password" name="password" id="password" value="">
+    </div>
+    <input type="submit" class="ui-btn" value="Login"/>
+</script>
+
+<!-- User -->
+<script type="text/template" id="user-page-template">
+        <div class="ui-field-contain">
+            <label for="user_id">ID:</label>
+            <input type="text" name="id" id="user_id" value="">
+        </div>
+        <div class="ui-field-contain">
+            <label for="user_username">Username:</label>
+            <input type="text" name="username" id="user_username" value="">
+        </div>
+        <ul class="devices"></ul>
+</script>
+
+<!-- Device alerts -->
+<script type="text/template" id="device-alerts-page-template">
+    <!-- Some sort of list? -->
+</script>
+
+<!-- Alert -->
+<script type="text/template" id="alert-page-template">
+    <div class="ui-field-contain">
+        <label for="alert_startTime">Start time:</label>
+        <input type="text" name="alert_startTime" id="alert_startTime" value="">
+    </div>
+    <div class="ui-field-contain">
+        <label for="alert_endTime">End time:</label>
+        <input type="text" name="alert_endTime" id="alert_endTime" value="">
+    </div>
+    <div class="ui-field-contain">
+        <label for="alert_interval">Interval (mins):</label>
+        <input type="text" name="alert_interval" id="alert_interval" value="">
+    </div>
+    <div class="ui-field-contain">
+        <!-- TODO: make this a data-driven select -->
+        <label for="alert_variable">Variable:</label>
+        <input type="text" name="alert_variable" id="alert_variable" value="">
+    </div>
+    <div class="ui-field-contain">
+        <label for="alert_value_expression">Value expression:</label>
+        <input type="text" name="alert_value_expression" id="alert_value_expression" value="">
+    </div>
+</script>
+
+<!-- Device Edit Template -->
+<script type="text/template" id="device-edit-template">
+    <div>
+        <fieldset>
+            <legend>Device</legend>
+            <form>
+                <div class="ui-field-contain">
+                    <label for="device_id">ID:</label>
+                    <input type="text" name="id" id="device_id" value="">
+                </div>
+                <div class="ui-field-contain">
+                    <label for="device_name">Name:</label>
+                    <input type="text" name="name" id="device_name" value="">
+                </div>
+                <input type="button" name="save_device" value="Save"/>
+            </form>
+        </fieldset>
+    </div>
+</script>
+
+<!-- Device List Template -->
+<script id="deviceListItemTemplate" type="text/template">
+    <li><a data-name="name" href=""></a></li>
+</script>

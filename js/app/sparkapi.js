@@ -6,7 +6,9 @@ var SparkApi = (function() {
         basicAuth = "Basic " + btoa("spark:spark");
 
     $.ajaxPrefilter(function(options) {
-        options.url = baseUrl + options.url;
+        if (options.url.indexOf("/") === 0) {
+            options.url = baseUrl + options.url;
+        }
     });
 
     var login = function(data) {
@@ -22,11 +24,9 @@ var SparkApi = (function() {
                 password: data.password
             }
         });
-    }
+    };
 
     return {
         login: login
     };
-
-    //var request =
 })();

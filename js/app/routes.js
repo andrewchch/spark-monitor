@@ -5,10 +5,10 @@ var Router = Backbone.Router.extend( {
     initialize: function() {
         // Instantiates a new Login View if it doesn't already exist, create a model and bind it to the model
         var self = this;
-        this.loginView = AppViews.loginView;
-        this.userView = AppViews.userView;
-        this.deviceView = AppViews.deviceView;
-        this.alertView = AppViews.alertView;
+        this.loginView = new AppViews.LoginView({id: "login", title: "Login", contentTemplate: "login-page-template"});
+        this.userView = new AppViews.UserView({id: "user", title: "User", contentTemplate: "user-page-template"});
+        this.deviceView = new AppViews.DeviceView({id: "device", title: "Device", contentTemplate: "device-page-template"});
+        this.alertView = new AppViews.AlertView({id: "alert", title: "Alert", contentTemplate: "alert-page-template"});
 
         // Tells Backbone to start watching for hashchange events
         Backbone.history.start();

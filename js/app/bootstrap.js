@@ -2,9 +2,11 @@
 	var device_ready = false;
 	var jqm_mobile_init = false;
 	var initApp = function() {
-		if ((device_ready && jqm_mobile_init) || (jqm_mobile_init && !mobile_system)) {
-			startApp();
-		}
+        Utils.loadTemplates().done(function() {
+            if ((device_ready && jqm_mobile_init) || (jqm_mobile_init && !mobile_system)) {
+                startApp();
+            }
+        });
 	};
 	var onDeviceReady = function() {
 		device_ready = true;
