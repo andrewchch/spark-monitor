@@ -19,7 +19,6 @@ var AppViews = (function()
         _container: undefined,
         _bindings: undefined,
         initialize: function (options) {
-            //on view initialize, initialize _modelBinder
             this.id = this.id || options.id;
             this.title = this.title || options.title;
             this._model = this.model || options.model;
@@ -29,8 +28,12 @@ var AppViews = (function()
             this.contentTemplate = this.contentTemplate || options.contentTemplate;
 
             this._modelBinder = new Backbone.ModelBinder();
-
-            this.delegateEvents();
+        },
+        getContainer: function() {
+            return this._container;
+        },
+        getModel: function() {
+            return this._model;
         },
         setModel: function (model) {
             this._model = model;
@@ -49,11 +52,13 @@ var AppViews = (function()
                 content: content
             });
 
+            this.delegateEvents();
+
             //call modelBinder bind api to apply bindings on the current view
             this._modelBinder.bind(
-                this._model /*the model to bind*/ ,
-                this.$el /*root element*/ ,
-                this._bindings /*bindings*/
+                this._model,
+                this.$el,
+                this._bindings
             );
 
             if (this.afterRender) {
