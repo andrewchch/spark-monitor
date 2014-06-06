@@ -141,7 +141,7 @@ var AppViews = (function()
         afterRender: function() {
             // Add the devices view
             this.deviceListView = new ListView({
-                collectionContainer: $(".devices", this.container),
+                collectionContainer: $(".devices", this.getContainer()),
                 itemTemplateId: "deviceListItemTemplate",
                 collection: this.model.devices,
                 bindings: {
@@ -149,6 +149,8 @@ var AppViews = (function()
                     id: {selector: '[name="name"]', elAttribute: 'href', converter: function() { return this.model.getUrl(); } }
                 }
             });
+
+            this.deviceListView.render();
         }
     });
 
