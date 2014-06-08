@@ -84,11 +84,11 @@ var AppViews = (function()
             this._collection = options.collection;
             this._collectionContainer = options.collectionContainer;
             this._bindings = options.bindings;
-            var elManagerFactory = new Backbone.CollectionBinder.ElManagerFactory(this._itemHtml, "data-name");
+            var elManagerFactory = new Backbone.CollectionBinder.ElManagerFactory(this._itemHtml, this._bindings);
             this._collectionBinder = new Backbone.CollectionBinder(elManagerFactory);
         },
         render: function(){
-            this._collectionBinder.bind(this._collection, this._collectionContainer, this._bindings);
+            this._collectionBinder.bind(this._collection, this._collectionContainer);
             return this;
         },
         close: function(){
@@ -146,7 +146,13 @@ var AppViews = (function()
                 collection: this.model.devices,
                 bindings: {
                     name: '[name="name"]',
-                    id: {selector: '[name="name"]', elAttribute: 'href', converter: function() { return this.model.getUrl(); } }
+                    id: {
+                        selector: '[name="name"]',
+                        elAttribute: 'href',
+                        converter: function(direction, value, modelAttributeName, model, boundEl) {
+                            return model.getUrl();
+                        }
+                    }
                 }
             });
 

@@ -114,6 +114,10 @@ var runTests = function () {
 
             // Check that the devices list has been populated
             equal($(".devices", container).children().length, 1, "Devices list populated");
+
+            // Check that the device list item url contains the device ID
+            ok($(".devices a:eq(0)").attr("href").indexOf(devices[0].id) > 0, "Device link url is correct");
+
             start();
         }).fail(function() {
             console.log('failed');
@@ -121,4 +125,43 @@ var runTests = function () {
 
         requests[0].respond(200, { "Content-Type": "application/json" }, JSON.stringify(devices));
     });
+
+    module("DeviceView", {
+        setup: function () {
+            xhr = sinon.useFakeXMLHttpRequest();
+            requests = [];
+
+            xhr.onCreate = function (xhr) {
+                requests.push(xhr);
+            };
+        },
+
+        tearDown: function () {
+            xhr.restore();
+        }
+    });
+
+    test("Create a DeviceView and render it", function () {
+        var deviceView = new AppViews.DeviceView({id: "device", title: "Device", contentTemplate: "device-page-template"}),
+            container = deviceView.getContainer(),
+            deviceData = {
+                id: "55ff6e065075555333260287",
+                name: "core1",
+                connected: true,
+                variables: {
+                    analogvalue: "int32"
+                },
+                functions: [
+                    "testFunction"
+                ]
+            },
+            container,
+            userEl,
+            idEl;
+
+        testView = deviceView;
+
+        ok(deviceView.model, "View has a model");
+    });
+
 }

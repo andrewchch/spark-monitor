@@ -1,7 +1,7 @@
 var xhr,
     requests;
 
-module("UserModel", {
+module("Models", {
     setup: function () {
         xhr = sinon.useFakeXMLHttpRequest();
         requests = [];
@@ -95,12 +95,35 @@ test("Get an authenticated user that does exist in the collection", function () 
     });
 });
 
-module("DeviceModel");
-
 test("Instantiate a device", function () {
-    var device = new DeviceModel();
-    var alerts = device.get("alerts");
-    equal(device.get("id"), "", "Device has correct id");
-    equal(alerts.size(), 0, "Device has no alerts");
+    var deviceData = {
+            id: "55ff6e065075555333260287",
+            name: "core1",
+            connected: true,
+            variables: {
+                analogvalue: "int32"
+            },
+            functions: [
+                "testFunction"
+            ]
+        },
+        collection = new DeviceCollection(),
+        device = collection.add({
+            id: "55ff6e065075555333260287"
+        });
+
+    stop();
+    device.fetch().done(function(deviceData) {
+        var re = new RegExp(collection.url + "/" + device.get("id") + "$");
+        ok(re.test(requests[0].url), "Request has correct url");
+        equal(device.get("id"), deviceData.id, "Device has correct id");
+        equal(device.get("name"), deviceData.name, "Device has correct name");
+        equal(device.alerts.size(), 0, "Device has no alerts");
+        equal(device.get("variables").analogvalue, deviceData.variables.analogvalue, "Device has some variables");
+        equal(device.get("functions").length, 1, "Device has some functions");
+        start();
+    });
+
+    requests[0].respond(200, { "Content-Type": "application/json" }, JSON.stringify(deviceData));
 });
 

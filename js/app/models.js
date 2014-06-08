@@ -35,12 +35,13 @@ var DeviceModel = Backbone.RelationalModel.extend({
     defaults:{
         id: "",
         name: "",
-        variables: [],
+        connected: false,
+        variables: {},
         functions: [],
         alerts: new AlertCollection()
     },
     getUrl: function() {
-        return '?id=' + this.get("id") + '#device/';
+        return '?id=' + this.get("id") + '#device';
     },
     relations: [{
         type: Backbone.HasMany,

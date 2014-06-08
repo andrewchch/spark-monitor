@@ -2,7 +2,6 @@ var startApp = function() {
 
     // Instantiate models
     app.collections = {
-        devices: new DeviceCollection(),
         alerts: new AlertCollection(),
         users: new UserCollection()
     };
