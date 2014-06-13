@@ -151,6 +151,6 @@ var UserCollection = Backbone.Collection.extend({
         // For now, we'll set the current user to whoever last logged in.
         // Logging in is the process of confirming your credentials, since we don't want
         // to save passwords and this app only works online anyway.
-        return currentUser;
+        return this.currentUser;
     }
 });

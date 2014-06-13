@@ -27,9 +27,10 @@ var Router = Backbone.Router.extend( {
     bind the views to the models.
     */
     // TODO: refactor these out into proper controllers
+    // TODO: I think we need to clean up old jQM pages manually?
     login: function() {
         this.loginView.render();
-        $.mobile.changePage( "#login" , { reverse: false, changeHash: false } );
+        this.changePage("login");
     },
     user: function(user) {
         var self = this;
@@ -37,13 +38,33 @@ var Router = Backbone.Router.extend( {
             .setModel(user)
             .loadDevices().done( function() {
                 self.userView.render();
-                $.mobile.changePage( "#user", { reverse: false, changeHash: false } );
+                self.changePage("user");
             });
     },
     device: function(id) {
-        $.mobile.changePage( "#device" , { reverse: false, changeHash: false } );
+        var self = this,
+            user = app.collections.users.getCurrentUser(),
+            device = user && user.devices.get(id);
+
+        if (!user) {
+            this.login();
+            return true;
+        }
+
+        if (!device) {
+            // TODO: Show invalid device message?
+            console.log('Invalid device: ' + id);
+            return;
+        }
+
+        this.deviceView.setModel(device);
+        this.deviceView.render();
+        self.changePage("device");
     },
     alert: function() {
-        $.mobile.changePage( "#alert" , { reverse: false, changeHash: false } );
+        self.changePage("alert");
+    },
+    changePage: function (pageId, opts) {
+        this.navigate(pageId);
     }
 });

@@ -16,6 +16,14 @@
 	var onMobileInit = function() {
 		$.support.cors = true;
 		$.mobile.allowCrossDomainPages = true;
+
+        // Disable jQM route handling so we can get Backbone to do it
+        // Prevents all anchor click handling including the addition of active button state and alternate link blurring.
+        $.mobile.linkBindingEnabled = false;
+
+        // Disabling this will prevent jQuery Mobile from handling hash changes
+        $.mobile.hashListeningEnabled = false;
+
 		jqm_mobile_init = true;
 		//alert('jqm ready');
 		initApp();
