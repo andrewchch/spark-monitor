@@ -7,9 +7,18 @@ var LoginModel = Backbone.Model.extend({
 
 var AlertModel = Backbone.RelationalModel.extend({
     idAttribute: "id",
+    url: "alert", // Doesn't get used because of localstorage, not sure why it's required
+    relations: [{
+        type: Backbone.HasOne,
+        key: 'device',
+        relatedModel: DeviceModel,
+        reverseRelation: {
+            key: 'alertFor',
+            includeInJSON: 'id'
+        }
+    }],
     defaults: {
         id: null,
-        deviceId: null,
         name: "",
         checkInterval: 5,
         startTime: "00:00",
@@ -22,12 +31,17 @@ var AlertModel = Backbone.RelationalModel.extend({
 
 var AlertCollection = Backbone.Collection.extend({
     model: AlertModel,
-    localStorage: new Backbone.LocalStorage("Alerts")
-    /*
-    initialize: function() {
-        this.fetch();
+    localStorage: new Backbone.LocalStorage("Alert"),
+    removeAll: function() {
+        var self = this,
+            promises = [];
+
+        this.each(function(model) {
+            promises.push(model.destroy());
+        });
+
+        return $.when(promises);
     }
-    */
 });
 
 var DeviceModel = Backbone.RelationalModel.extend({
@@ -37,56 +51,47 @@ var DeviceModel = Backbone.RelationalModel.extend({
         name: "",
         connected: false,
         variables: {},
-        functions: [],
-        alerts: new AlertCollection()
+        functions: []
     },
     getUrl: function() {
         return '?id=' + this.get("id") + '#device';
-    },
-    relations: [{
-        type: Backbone.HasMany,
-        key: 'alerts',
-        relatedModel: AlertModel,
-        collectionType: AlertCollection,
-        reverseRelation: {
-            key: 'alertFor',
-            includeInJSON: 'id'
-        }
-    }],
-    initialize: function() {
-        this.alerts = new AlertCollection();
-        this.alerts.fetch();
     }
 });
 
 var DeviceCollection = Backbone.Collection.extend({
     model: DeviceModel,
     url: '/v1/devices'
-    //localStorage: new Backbone.LocalStorage("Devices"),
-    /*
-    initialize: function() {
-        this.fetch();
-    }
-    */
 });
 
 var UserModel = Backbone.RelationalModel.extend({
+    url: "user", // Doesn't get used because of localstorage, not sure why it's required
     idAttribute: "username",
     defaults:{
         username: "",
-        authToken: "",
-        devices: new DeviceCollection()
+        authToken: ""
     },
-    relations: [{
-        type: Backbone.HasMany,
-        key: 'devices',
-        relatedModel: DeviceModel,
-        collectionType: DeviceCollection,
-        reverseRelation: {
-            key: 'deviceFor',
-            includeInJSON: 'username'
+    relations: [
+        {
+            type: Backbone.HasMany,
+            key: 'devices',
+            relatedModel: DeviceModel,
+            collectionType: DeviceCollection,
+            reverseRelation: {
+                key: 'deviceFor',
+                includeInJSON: 'id'
+            }
+        },
+        {
+            type: Backbone.HasMany,
+            key: 'alerts',
+            relatedModel: AlertModel,
+            collectionType: AlertCollection,
+            reverseRelation: {
+                key: 'alertFor',
+                includeInJSON: 'id'
+            }
         }
-    }],
+    ],
     loadDevices: function() {
         var self = this;
 
@@ -101,8 +106,14 @@ var UserModel = Backbone.RelationalModel.extend({
             });
         });
     },
-    initialize: function() {
+    initialize: function(opts) {
+        if (!(opts && opts.username)) {
+            throw new Error("No username provided");
+        }
+
+        this.set("id", opts.username);
         this.devices = new DeviceCollection();
+        this.alerts = new AlertCollection();
     },
     toString: function() {
         return '<User ' + this.get("id") + ">";
@@ -111,7 +122,7 @@ var UserModel = Backbone.RelationalModel.extend({
 
 var UserCollection = Backbone.Collection.extend({
     model: UserModel,
-    localStorage: new Backbone.LocalStorage("Users"),
+    localStorage: new Backbone.LocalStorage("User"),
     currentUser: null,
     initialize: function() {
         this.fetch();

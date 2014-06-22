@@ -17,16 +17,39 @@ module("Models", {
 });
 
 test("Instantiate a user", function () {
-    var user = new UserModel({
-        id: 1
+    var userData = {
+        username: "Fred"
+    },
+    userInitSpy = sinon.spy(UserModel.prototype, 'initialize'),
+    users,
+    user;
+
+    // User should fail with no username
+    try {
+        var userWithNoName = new UserModel();
+    }
+    catch (e) {}
+
+    equal("No username provided", userInitSpy.exceptions[0].message, "Exception on no username provided");
+    UserModel.prototype.initialize.restore();
+
+    // Add a valid user
+    users = new UserCollection();
+    user = users.add(new UserModel(userData));
+    var saving = user.save();
+
+    stop();
+    saving.done(function() {
+        equal(user.id, userData.username, "User has correct id");
+        equal(user.get("devices").size(), 0, "User has no devices");
+        equal(user.get("alerts").size(), 0, "User has no alerts");
+        user.destroy();
+        start();
     });
-    var devices = user.get("devices");
-    equal(user.get("id"), 1, "User has correct id");
-    equal(devices.size(), 0, "User has no devices");
 });
 
 test("Load devices for a user", function () {
-    var user = new UserModel({id: 1}),
+    var user = new UserModel({username: 'test'}),
         devices = [
             {
                 id: "123",
@@ -45,6 +68,8 @@ test("Load devices for a user", function () {
         equal(firstModel.get("id"), devices[0].id, "Device has correct id");
         equal(firstModel.get("name"), devices[0].name, "Device has correct name");
         equal(firstModel.get("deviceFor").toString(), user.toString(), "Device belongs to a user");
+
+        user.destroy();
         start();
     }).fail(function() {
         console.log('failed');
@@ -118,7 +143,6 @@ test("Instantiate a device", function () {
         ok(re.test(requests[0].url), "Request has correct url");
         equal(device.get("id"), deviceData.id, "Device has correct id");
         equal(device.get("name"), deviceData.name, "Device has correct name");
-        equal(device.alerts.size(), 0, "Device has no alerts");
         equal(device.get("variables").analogvalue, deviceData.variables.analogvalue, "Device has some variables");
         equal(device.get("functions").length, 1, "Device has some functions");
         start();
@@ -127,3 +151,70 @@ test("Instantiate a device", function () {
     requests[0].respond(200, { "Content-Type": "application/json" }, JSON.stringify(deviceData));
 });
 
+test("Instantiate an alert", function () {
+    var users = new UserCollection(),
+        user = users.add({username: 'test'}),
+        device = user.devices.add({
+            id: "55ff6e065075555333260287"
+        }),
+        alertId = null,
+        alertData = {
+            deviceId: null,
+            name: "My Alert",
+            checkInterval: 5,
+            startTime: "00:00",
+            endTime: "00:00",
+            variable: "",
+            valueExpression: "",
+            message: "Alert"
+        };
+
+    var alert = user.alerts.add(alertData);
+    ok(alert.isNew(), "Alert has not been saved");
+    ok(!alert.id, "Alert has no id");
+
+    // Associate an alert with a device
+    alert.set("device", device);
+    equal(alert.get("device").get("id"), device.get("id"), "Device added to alert");
+
+    // Need to save the alert before we can save the user
+    alert.save();
+
+    // We can test local storage here, so save the user and then try to recreate it.
+    var onAlertSaved = function() {
+        return user.save();
+    };
+
+    var onUserSaved = function() {
+        // Try loading the saved model via the collection
+        user.alerts.reset();
+        equal(user.alerts.size(), 0, "Alerts cleared");
+        return user.alerts.fetch();
+    };
+
+    var onAlertsLoaded = function() {
+        equal(user.alerts.length, 1, "User has correct number of alerts");
+        equal(alert.get("id"), user.alerts.models[0].get("id"), "Loaded alert has correct id");
+        equal(alertData.name, user.alerts.models[0].get("name"), "Loaded alert has correct name");
+    };
+
+    var tidyUp = function() {
+        return user.alerts
+            .removeAll()
+            .then(function() {
+                equal(user.alerts.length, 0, "User alert have been cleared");
+                return user.destroy();
+            })
+            .done(function() {
+                // TODO: Confirm that the user has been destroyed
+                start();
+            });
+    };
+
+    stop();
+    alert.save()
+        .then(onAlertSaved)
+        .then(onUserSaved)
+        .then(onAlertsLoaded)
+        .then(tidyUp);
+});
